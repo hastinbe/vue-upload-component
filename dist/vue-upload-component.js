@@ -1,6 +1,6 @@
 /*!
  * Name: vue-upload-component
- * Version: 2.8.2
+ * Version: 2.8.4
  * Author: LianYue
  */
 (function (global, factory) {
@@ -668,7 +668,7 @@ var FileUpload = { render: function render() {
     },
 
     size: {
-      type: Number,
+      type: [Function, Number],
       default: 0
     },
 
@@ -1299,7 +1299,9 @@ var FileUpload = { render: function render() {
       }
 
       // 大小
-      if (this.size > 0 && file.size >= 0 && file.size > this.size) {
+      var size = typeof this.size === 'function' ? this.size(file) : this.size;
+
+      if (size > 0 && file.size >= 0 && file.size > size) {
         return Promise.reject('size');
       }
 
