@@ -766,7 +766,6 @@
         default: true
       },
 
-
       size: {
         type: [Function, Number],
         default: 0
@@ -1928,7 +1927,7 @@
   /* scoped */
   var __vue_scope_id__$1 = undefined;
   /* module identifier */
-  var __vue_module_identifier__$1 = "data-v-62fe22ff";
+  var __vue_module_identifier__$1 = "data-v-06571178";
   /* functional template */
   var __vue_is_functional_template__$1 = false;
   /* component normalizer */
