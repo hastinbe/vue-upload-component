@@ -1,6 +1,6 @@
 /*!
  * Name: vue-upload-component
- * Version: 2.8.7
+ * Version: 2.8.9
  * Author: LianYue
  */
 (function (global, factory) {
@@ -238,7 +238,8 @@
           body: Object.assign(this.startBody, {
             phase: 'start',
             mime_type: this.fileType,
-            size: this.fileSize
+            size: this.fileSize,
+            name: this.fileName
           })
         }).then(function (res) {
           if (res.status !== 'success') {
@@ -415,6 +416,16 @@
       key: 'fileSize',
       get: function get() {
         return this.file.size;
+      }
+
+      /**
+       * Gets the file size
+       */
+
+    }, {
+      key: 'fileName',
+      get: function get() {
+        return this.file.name;
       }
 
       /**
@@ -1114,8 +1125,9 @@
             });
           }
         } else {
+          var names = el.value.replace(/\\/g, '/').split('/');
           files.push({
-            name: el.value.replace(/^.*?([^\/\\\r\n]+)$/, '$1'),
+            name: names[names.length - 1],
             el: el
           });
         }
@@ -1927,7 +1939,7 @@
   /* scoped */
   var __vue_scope_id__$1 = undefined;
   /* module identifier */
-  var __vue_module_identifier__$1 = "data-v-06571178";
+  var __vue_module_identifier__$1 = "data-v-22bec77a";
   /* functional template */
   var __vue_is_functional_template__$1 = false;
   /* component normalizer */
@@ -2025,4 +2037,3 @@
   return src;
 
 })));
-//# sourceMappingURL=vue-upload-component.part.js.map
