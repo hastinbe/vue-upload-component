@@ -1,8 +1,9 @@
 <template>
-  <label :class="className">
+  <span :class="className">
     <slot></slot>
+    <label :for="inputId || name"></label>
     <input-file></input-file>
-  </label>
+  </span>
 </template>
 <style>
 .file-uploads {
@@ -11,7 +12,9 @@
   text-align: center;
   display: inline-block;
 }
-.file-uploads.file-uploads-html4 input[type="file"] {
+.file-uploads.file-uploads-html4 input[type="file"], .file-uploads.file-uploads-html5 label {
+  /* background fix ie  click */
+  background: #fff;
   opacity: 0;
   font-size: 20em;
   z-index: 1;
@@ -23,7 +26,9 @@
   width: 100%;
   height: 100%;
 }
-.file-uploads.file-uploads-html5 input[type="file"] {
+.file-uploads.file-uploads-html5 input[type="file"], .file-uploads.file-uploads-html4 label {
+  /* background fix ie  click */
+  background: rgba(255, 255, 255, 0);
   overflow: hidden;
   position: fixed;
   width: 1px;
@@ -203,6 +208,12 @@ export default {
 
     // files 定位缓存
     this.maps = {}
+    if (this.files) {
+      for (let i = 0; i < this.files.length; i++) {
+        let file = this.files[i]
+        this.maps[file.id] = file
+      }
+    }
 
     this.$nextTick(function () {
 
@@ -483,11 +494,11 @@ export default {
             name: file.webkitRelativePath || file.relativePath || file.name,
             type: file.type,
             file,
-            el
           })
         }
       } else {
         var names = el.value.replace(/\\/g, '/').split('/')
+        delete el.__vuex__
         files.push({
           name: names[names.length - 1],
           el,
@@ -1286,14 +1297,30 @@ export default {
 
     onDragenter(e) {
       e.preventDefault()
-      if (!this.dropActive) {
+      if (this.dropActive) {
+        return
+      }
+      if (!e.dataTransfer) {
+        return
+      }
+      let dt = e.dataTransfer
+      if (dt.files && dt.files.length) {
+        this.dropActive = true
+      } else if (!dt.types) {
+        this.dropActive = true
+      } else if (dt.types.indexOf && dt.types.indexOf('Files') !== -1) {
+        this.dropActive = true
+      } else if (dt.types.contains && dt.types.contains('Files')) {
         this.dropActive = true
       }
     },
 
     onDragleave(e) {
       e.preventDefault()
-      if (e.target.nodeName === 'HTML' || e.target === e.explicitOriginalTarget || (e.screenX === 0 && e.screenY === 0 && !e.fromElement && e.offsetX <= 0)) {
+      if (!this.dropActive) {
+        return
+      }
+      if (e.target.nodeName === 'HTML' || e.target === e.explicitOriginalTarget || (!e.fromElement && (e.clientX <= 0 || e.clientY <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight))) {
         this.dropActive = false
       }
     },

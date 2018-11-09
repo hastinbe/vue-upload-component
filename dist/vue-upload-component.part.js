@@ -1,6 +1,6 @@
 /*!
  * Name: vue-upload-component
- * Version: 2.8.11
+ * Version: 2.8.15
  * Author: LianYue
  */
 (function (global, factory) {
@@ -574,13 +574,17 @@
   var script = {
     methods: {
       change: function change(e) {
-        this.$destroy();
         this.$parent.addInputFile(e.target);
-        // eslint-disable-next-line
-        new this.constructor({
-          parent: this.$parent,
-          el: this.$el
-        });
+        e.target.value = '';
+        if (!e.target.files) {
+          // ie9 fix #219
+          this.$destroy();
+          // eslint-disable-next-line
+          new this.constructor({
+            parent: this.$parent,
+            el: this.$el
+          });
+        }
       }
     }
   };
@@ -852,6 +856,12 @@
 
       // files 定位缓存
       this.maps = {};
+      if (this.files) {
+        for (var i = 0; i < this.files.length; i++) {
+          var file = this.files[i];
+          this.maps[file.id] = file;
+        }
+      }
 
       this.$nextTick(function () {
 
@@ -1118,12 +1128,12 @@
               size: file.size,
               name: file.webkitRelativePath || file.relativePath || file.name,
               type: file.type,
-              file: file,
-              el: el
+              file: file
             });
           }
         } else {
           var names = el.value.replace(/\\/g, '/').split('/');
+          delete el.__vuex__;
           files.push({
             name: names[names.length - 1],
             el: el
@@ -1901,13 +1911,29 @@
       },
       onDragenter: function onDragenter(e) {
         e.preventDefault();
-        if (!this.dropActive) {
+        if (this.dropActive) {
+          return;
+        }
+        if (!e.dataTransfer) {
+          return;
+        }
+        var dt = e.dataTransfer;
+        if (dt.files && dt.files.length) {
+          this.dropActive = true;
+        } else if (!dt.types) {
+          this.dropActive = true;
+        } else if (dt.types.indexOf && dt.types.indexOf('Files') !== -1) {
+          this.dropActive = true;
+        } else if (dt.types.contains && dt.types.contains('Files')) {
           this.dropActive = true;
         }
       },
       onDragleave: function onDragleave(e) {
         e.preventDefault();
-        if (e.target.nodeName === 'HTML' || e.target === e.explicitOriginalTarget || e.screenX === 0 && e.screenY === 0 && !e.fromElement && e.offsetX <= 0) {
+        if (!this.dropActive) {
+          return;
+        }
+        if (e.target.nodeName === 'HTML' || e.target === e.explicitOriginalTarget || !e.fromElement && (e.clientX <= 0 || e.clientY <= 0 || e.clientX >= window.innerWidth || e.clientY >= window.innerHeight)) {
           this.dropActive = false;
         }
       },
@@ -1927,7 +1953,7 @@
   var __vue_script__$1 = script$1;
   /* template */
   var __vue_render__$1 = function __vue_render__() {
-    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('label', { class: _vm.className }, [_vm._t("default"), _vm._v(" "), _c('input-file')], 2);
+    var _vm = this;var _h = _vm.$createElement;var _c = _vm._self._c || _h;return _c('span', { class: _vm.className }, [_vm._t("default"), _vm._v(" "), _c('label', { attrs: { "for": _vm.inputId || _vm.name } }), _vm._v(" "), _c('input-file')], 2);
   };
   var __vue_staticRenderFns__$1 = [];
 
