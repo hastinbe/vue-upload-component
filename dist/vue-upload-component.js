@@ -1,6 +1,6 @@
 /*!
  * Name: vue-upload-component
- * Version: 2.8.16
+ * Version: 2.8.19
  * Author: LianYue
  */
 (function (global, factory) {
@@ -419,7 +419,7 @@
       }
 
       /**
-       * Gets the file size
+       * Gets the file name
        */
 
     }, {
@@ -576,8 +576,13 @@
     methods: {
       change: function change(e) {
         this.$parent.addInputFile(e.target);
-        e.target.value = '';
-        if (!e.target.files) {
+        if (e.target.files) {
+          e.target.value = '';
+          if (!/safari/i.test(navigator.userAgent)) {
+            e.target.type = '';
+            e.target.type = 'file';
+          }
+        } else {
           // ie9 fix #219
           this.$destroy();
           // eslint-disable-next-line
@@ -1965,7 +1970,7 @@
   /* style */
   var __vue_inject_styles__$1 = function (inject) {
     if (!inject) return;
-    inject("data-v-6b4a2a80_0", { source: "\n.file-uploads{overflow:hidden;position:relative;text-align:center;display:inline-block\n}\n.file-uploads.file-uploads-html4 input[type=file],.file-uploads.file-uploads-html5 label{background:#fff;opacity:0;font-size:20em;z-index:1;top:0;left:0;right:0;bottom:0;position:absolute;width:100%;height:100%\n}\n.file-uploads.file-uploads-html4 label,.file-uploads.file-uploads-html5 input[type=file]{background:rgba(255,255,255,0);overflow:hidden;position:fixed;width:1px;height:1px;z-index:-1;opacity:0\n}", map: undefined, media: undefined });
+    inject("data-v-14a7a7dc_0", { source: "\n.file-uploads{overflow:hidden;position:relative;text-align:center;display:inline-block\n}\n.file-uploads.file-uploads-html4 input,.file-uploads.file-uploads-html5 label{background:#fff;opacity:0;font-size:20em;z-index:1;top:0;left:0;right:0;bottom:0;position:absolute;width:100%;height:100%\n}\n.file-uploads.file-uploads-html4 label,.file-uploads.file-uploads-html5 input{background:rgba(255,255,255,0);overflow:hidden;position:fixed;width:1px;height:1px;z-index:-1;opacity:0\n}", map: undefined, media: undefined });
   };
   /* scoped */
   var __vue_scope_id__$1 = undefined;

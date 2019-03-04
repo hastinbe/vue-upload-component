@@ -1,6 +1,6 @@
 /*!
  * Name: vue-upload-component
- * Version: 2.8.16
+ * Version: 2.8.19
  * Author: LianYue
  */
 (function (global, factory) {
@@ -419,7 +419,7 @@
       }
 
       /**
-       * Gets the file size
+       * Gets the file name
        */
 
     }, {
@@ -576,8 +576,13 @@
     methods: {
       change: function change(e) {
         this.$parent.addInputFile(e.target);
-        e.target.value = '';
-        if (!e.target.files) {
+        if (e.target.files) {
+          e.target.value = '';
+          if (!/safari/i.test(navigator.userAgent)) {
+            e.target.type = '';
+            e.target.type = 'file';
+          }
+        } else {
           // ie9 fix #219
           this.$destroy();
           // eslint-disable-next-line
